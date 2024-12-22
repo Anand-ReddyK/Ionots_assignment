@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4">Progress of Project: {{ project.title }}</h1>
+
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <h2 class="text-xl font-semibold">{{ project.title }}</h2>
+        <p class="text-gray-700 mt-2">{{ project.description }}</p>
+        <div class="mt-4">
+            <p class="text-sm text-gray-500">Status: 
+                <span class="font-semibold text-indigo-600">{{ project.get_status_display }}</span>
+            </p>
+            <p class="text-sm text-gray-500">Deadline: 
+                <span class="font-semibold text-indigo-600">{{ project.deadline }}</span>
+            </p>
+            <p class="text-sm text-gray-500">Total Score: 
+                <span class="font-semibold text-indigo-600">{{ total_score }}</span>
+            </p>
+            <p class="text-sm text-gray-500">Score Obtained: 
+                <span class="font-semibold text-green-600">{{ score_obtained }}</span>
+            </p>
+            <p class="text-sm text-gray-500">Completed Tasks: 
+                <span class="font-semibold text-indigo-600">{{ completed_tasks }}</span> / {{ total_tasks }}
+            </p>
+            <p class="text-sm text-gray-500">Progress: 
+                <span class="font-semibold text-indigo-600">{{ progress }}%</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="space-y-4">
+        {% for task in tasks %}
+        <div class="bg-white shadow-md rounded-lg p-6 {% if task.status == 'Completed' %} bg-green-100 border-l-4 border-green-500 {% endif %}">
+            <h3 class="text-lg font-semibold">{{ task.name }}</h3>
+            <p class="text-gray-700 mt-2">{{ task.description }}</p>
+            <div class="mt-4">
+                <p class="text-sm text-gray-500">Status: 
+                    <span class="font-semibold {% if task.status == 'Completed' %}text-green-600{% else %}text-gray-600{% endif %}">{{ task.get_status_display }}</span>
+                </p>
+                <p class="text-sm text-gray-500">Score: 
+                    <span class="font-semibold text-indigo-600">{{ task.score }}</span>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

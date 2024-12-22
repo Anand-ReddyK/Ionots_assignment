@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 mb-8">
+        <h1 class="text-4xl font-bold text-gray-800">{{ project.title }}</h1>
+        <p class="text-gray-600 mt-2">{{ project.description }}</p>
+        
+        <div class="mt-4">
+            <p class="text-lg font-medium text-gray-700">Assigned to: <span class="font-normal">{{ project.assigned_to.username }}</span></p>
+            <p class="text-lg font-medium text-gray-700">Deadline: <span class="font-normal">{{ project.deadline }}</span></p>
+        </div>
+
+        {% if project.status == 'Pending' %}
+        <div class="mt-4">
+            <form method="POST" action="{% url 'accept_project' pk=project.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                    Accept Project
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 mb-8">
+        <h2 class="text-2xl font-semibold mt-4 text-gray-800">Tasks</h2>
+
+        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for task in tasks %}
+            <div class="bg-white shadow-lg rounded-lg p-4 border border-gray-200">
+                <h3 class="text-xl font-semibold text-gray-800">{{ task.name }}</h3>
+                <p class="text-gray-600 mt-2">{{ task.description }}</p>
+                
+                <div class="mt-4 flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-700">Status: {{ task.status }}</span>
+                    <span class="text-sm font-medium text-gray-700">Score: {{ task.score }}</span>
+                </div>
+
+                {% if project.status == 'Accepted' and task.status == 'Pending' %}
+                <div class="mt-4">
+                    <form method="POST" action="{% url 'update_task_status' task_id=task.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                            Complete Task
+                        </button>
+                    </form>
+                </div>
+                {% elif task.status == 'Completed' %}
+                <div class="mt-4 text-green-600">
+                    Task Completed
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="col-span-3 text-center text-gray-500">No tasks assigned yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <h3 class="text-2xl font-semibold mt-4 text-gray-800">Add New Task</h3>
+        <form method="POST" class="mt-4">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Add Task</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
